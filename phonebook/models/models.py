@@ -4,7 +4,8 @@ from math import ceil
 LIMIT_OF_RECORDS_ON_ONE_PAGE = 5
 
 class Record:
-    def __init__(self, surname: str, name: str, patronymic: str, organization_name: str, work_phone: str, personal_phone: str):
+    def __init__(self, id: int, surname: str, name: str, patronymic: str, organization_name: str, work_phone: str, personal_phone: str):
+        self.id = id
         self.surname = surname
         self.name = name
         self.patronymic = patronymic
@@ -18,11 +19,8 @@ class Record:
             if not value:
                 raise ValidationError("Все поля должны быть заполнены.")
     
-    # def dict(self):
-    #     return {"first_name": self.first_name, "last_name": self.last_name, "number": self.number}
-    
     def __str__(self):
-        message = self.surname + " " + self.name + " " + self.patronymic + " работает в организации " +  self.organization_name + ". Рабочий номер телефона: " + self.work_phone + ", личный номер телефона: " + self.personal_phone
+        message = "[" + str(self.id) + "] " + self.surname + " " + self.name + " " + self.patronymic + " работает в организации " +  self.organization_name + ". Рабочий номер телефона: " + self.work_phone + ", личный номер телефона: " + self.personal_phone
         return message
     
 class Phonebook:
@@ -50,8 +48,9 @@ class Phonebook:
             return "\n".join(["1. Следующая страница", "0. В главное меню"])
         if self.page <= ceil(len(self.records) / LIMIT_OF_RECORDS_ON_ONE_PAGE) and self.page > 1:
             return "\n".join(["1. Следующая страница", "2. Предыдущая страница", "0. В главное меню"])
-        
-        
     
+    def current_page(self):
+        return self.records[LIMIT_OF_RECORDS_ON_ONE_PAGE*(self.page-1): LIMIT_OF_RECORDS_ON_ONE_PAGE*self.page]
+
     def __str__(self):
         return "\n".join(list(map(str, self.records[LIMIT_OF_RECORDS_ON_ONE_PAGE*(self.page-1): LIMIT_OF_RECORDS_ON_ONE_PAGE*self.page])))

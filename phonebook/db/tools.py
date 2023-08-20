@@ -14,6 +14,13 @@ class DatabaseTools:
                 json.dump([], new_file, indent=4)
 
     @classmethod
+    def get_new_id(cls) -> int:
+        with open(cls.filename, 'r', encoding='utf-8') as file:
+            data = list(map(lambda x: Record(**x), json.load(file)))
+        return len(data) + 1
+
+
+    @classmethod
     def add_new_record(cls, record: Record) -> None:
         with open(cls.filename, 'r+', encoding='utf-8') as file:
             data = json.load(file)
@@ -44,7 +51,14 @@ class DatabaseTools:
 
         if result:
             return Phonebook(result)
-
-
-            # data = list(map(lambda x: Record(**x) if "i" in x, json.load(file)))
+    
+    @classmethod
+    def edit_record(cls, id: int, edit_data: dict) -> None:
+        with open(cls.filename, 'r+', encoding='utf-8') as file:
+            data = json.load(file)
         
+            for field in edit_data:
+                data[id-1][field] = edit_data[field]
+                
+            file.seek(0)
+            json.dump(data, file, indent=4)
