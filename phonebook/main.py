@@ -29,7 +29,8 @@ def edit_record() -> None:
         "4. Название организации",
         "5. Рабочий телефон",
         "6. Личный телефон",
-        "0. Изменить запись",
+        "7. Изменить запись",
+        "0. Отмена (в главное меню)",
     ]
     id = int(input("Введите ID записи, которую хотите изменить: "))
     if not db.check_exists_id_in_database(id):
@@ -40,7 +41,9 @@ def edit_record() -> None:
     while True:
         print("\n".join(commands))
         command = input(
-            "Укажите параметр, который вы хотите изменить или выберите 0: "
+            "Укажите параметр, который вы хотите изменить, "
+            "после чего выберите 7 для изменения "
+            "или 0 для выхода в главное меню: "
         )
         if command == "1":
             query["surname"] = input("Новая фамилия: ")
@@ -54,15 +57,18 @@ def edit_record() -> None:
             query["work_phone"] = input("Новый рабочий телефон: ")
         elif command == "6":
             query["personal_phone"] = input("Новый личный телефон: ")
-        elif command == "0":
+        elif command == "7":
             db.edit_record(id, query)
             logging.info(f"Запись с ID {id} отредактирована.")
             print("Запись отредактирована")
             break
+        elif command == "0":
+            break
 
 
-def show_records(phonebook: Phonebook) -> None:
+def show_records() -> None:
     """Функция, запускающая процесс показа страницы с записями."""
+    phonebook = db.get_phonebook()
     while True:
         table = Table(
             [
@@ -96,13 +102,16 @@ def find_record() -> Phonebook:
         "4. Название организации",
         "5. Рабочий телефон",
         "6. Личный телефон",
-        "0. Начать поиск",
+        "7. Начать поиск",
+        "0. Отмена (в главное меню)",
     ]
     promt = dict()
     while True:
         print("\n" + "\n".join(commands))
         command = input(
-            "Укажите параметр, по которому вы хотите искать или выберите 0: "
+            "Укажите параметр, по которому вы хотите искать, "
+            "после чего выберите 7 для поиска "
+            "или 0 для выхода в главное меню: "
         )
         if command == "1":
             promt["surname"] = input("Введите фамилию: ")
@@ -124,8 +133,14 @@ def find_record() -> Phonebook:
         elif command == "6":
             promt["personal_phone"] = input("Введите личный телефон: ")
             commands.remove("6. Личный телефон")
+        elif command == "7":
+            phonebook = db.find_record(promt)
+            if phonebook:
+                show_records(phonebook)
+            else:
+                print("Записи не найдены")
         elif command == "0":
-            return db.find_record(promt)
+            break
 
 
 def create_new_record() -> None:
@@ -168,16 +183,11 @@ def main() -> None:
         command = input("Введите номер действия: ")
 
         if command == "1":
-            phonebook = db.get_phonebook()
-            show_records(phonebook)
+            show_records()
         elif command == "2":
             create_new_record()
         elif command == "3":
-            phonebook = find_record()
-            if phonebook:
-                show_records(phonebook)
-            else:
-                print("Записи не найдены")
+            find_record()
         elif command == "4":
             edit_record()
         elif command == "0":
