@@ -4,6 +4,12 @@ LIMIT_OF_RECORDS_ON_ONE_PAGE = 5
 
 
 class Record:
+    """Модель для записи.
+
+    Содержит в себе ID, фамилию, имя, отчество,
+    название организации, рабочий и личный номера телефонов.
+    """
+
     def __init__(
         self,
         id: int,
@@ -24,6 +30,11 @@ class Record:
         self.validate()
 
     def validate(self) -> None:
+        """Метод валидации создания новой записи.
+
+        Проверяет, что все атрибуты были переданы,
+        в противном случае выбрасывает исключение.
+        """
         for value in self.__dict__.values():
             if not value:
                 raise ValueError(
@@ -33,12 +44,22 @@ class Record:
 
 
 class Phonebook:
+    """Модель для телефонного справочника.
+
+    Содержит в себе номер страницы и список всех записей,
+    которые являются объектами модели Record.
+    """
+
     page: int = 1
 
     def __init__(self, records: list[Record]) -> None:
         self.records = records
 
     def show_page(self) -> list[Record]:
+        """Метод для показа актуальной страницы.
+
+        Возвращает список записей актуальной страницы справочника.
+        """
         return self.records[
             LIMIT_OF_RECORDS_ON_ONE_PAGE
             * (self.page - 1): LIMIT_OF_RECORDS_ON_ONE_PAGE
@@ -46,12 +67,21 @@ class Phonebook:
         ]
 
     def next_page(self) -> None:
+        """Метод для перехода на следующую страницу справочника."""
         self.page += 1
 
     def back_page(self) -> None:
+        """Метод для перехода на предыдущую страницу справочника."""
         self.page -= 1
 
     def possible_commands(self) -> str:
+        """Метод для получения валидных команд при просмотре страницы.
+
+        С помощью количества записей и лимита записей на одну страницу,
+        возвращает список команд,
+        которые не противоречат наполненности базы данных.
+        """
+
         if (
             self.page >= ceil(len(self.records) / LIMIT_OF_RECORDS_ON_ONE_PAGE)
             and self.page == 1
@@ -81,6 +111,11 @@ class Phonebook:
 
 
 class Table:
+    """Модель для таблицы вывода записей.
+
+    Принимает названия столбцов (заголовок) и объект модели справочника.
+    """
+
     def __init__(self, header: list[str], phonebook: Phonebook) -> None:
         self.header = header
         self.phonebook = phonebook
@@ -95,6 +130,11 @@ class Table:
         self.max_len = max(max_length_header, max_length_record) + 3
 
     def show_table(self) -> str:
+        """Метод для показа таблицы.
+
+        Возвращает готовую таблицу с заголовком,
+        разделительными линиями и записями.
+        """
         header = "|".join(
             [word.center(self.max_len, " ") for word in self.header]
         )

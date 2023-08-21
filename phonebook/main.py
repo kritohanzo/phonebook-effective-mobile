@@ -5,6 +5,11 @@ from db import Tools as db
 
 
 def get_logger() -> logging:
+    """Функция, отвечающая за создание логгера.
+
+    Возвращает логгер,
+    который записывает информационные и ошибочные события в файл.
+    """
     logger = logging.getLogger("logfile")
     log_file = Path(__file__).parent / "phonebook.log"
     file_handler = logging.FileHandler(log_file, encoding="utf-8")
@@ -16,6 +21,7 @@ def get_logger() -> logging:
 
 
 def edit_record() -> None:
+    """Функция, запускающая процесс редактириования записи."""
     commands = [
         "1. Фамилия",
         "2. Имя",
@@ -56,6 +62,7 @@ def edit_record() -> None:
 
 
 def show_records(phonebook: Phonebook) -> None:
+    """Функция, запускающая процесс показа страницы с записями."""
     while True:
         table = Table(
             [
@@ -81,6 +88,7 @@ def show_records(phonebook: Phonebook) -> None:
 
 
 def find_record() -> Phonebook:
+    """Функция, запускающая процесс поиска записей."""
     commands = [
         "1. Фамилия",
         "2. Имя",
@@ -121,6 +129,7 @@ def find_record() -> Phonebook:
 
 
 def create_new_record() -> None:
+    """Функция, запускающая процесс создания новой записи."""
     new_id = db.get_new_id()
     try:
         record = Record(
@@ -141,6 +150,10 @@ def create_new_record() -> None:
 
 
 def main() -> None:
+    """Главная функция, точка входа в программу.
+
+    В дальнейшем из неё будут запускаться остальные функции приложения.
+    """
     logger.info("Программа запущена.")
     commands = [
         "1. Посмотреть все записи",
